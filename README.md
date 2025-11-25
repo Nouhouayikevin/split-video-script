@@ -64,7 +64,7 @@ cd video-splitter
 
 ### Make the Script Executable (Optional)
 ```bash
-chmod +x split_video.py
+chmod +x split_video_script.py
 ```
 
 No additional dependencies or virtual environment setup is required.
@@ -73,7 +73,7 @@ No additional dependencies or virtual environment setup is required.
 
 ### Basic Syntax
 ```bash
-python3 split_video.py <video_filename> <segment_duration_seconds> [max_workers]
+python3 split_video_script.py <video_filename> <segment_duration_seconds> [max_workers]
 ```
 
 ### Arguments
@@ -88,22 +88,22 @@ python3 split_video.py <video_filename> <segment_duration_seconds> [max_workers]
 
 #### Split a video into 60-second segments
 ```bash
-python3 split_video.py "recording.webm" 60
+python3 split_video_script.py "recording.webm" 60
 ```
 
 #### Split with custom thread count
 ```bash
-python3 split_video.py "presentation.webm" 45 4
+python3 split_video_script.py "presentation.webm" 45 4
 ```
 
 #### Using absolute paths
 ```bash
-python3 split_video.py "/home/user/Videos/screencast.webm" 30
+python3 split_video_script.py "/home/user/Videos/screencast.webm" 30
 ```
 
 #### Using relative paths
 ```bash
-python3 split_video.py "./videos/tutorial.webm" 120 2
+python3 split_video_script.py "./videos/tutorial.webm" 120 2
 ```
 
 ## Output
@@ -174,7 +174,7 @@ Output directory: /path/to/result
 1. Prepare a test video file (or use an existing one)
 2. Run the script with a short segment duration:
    ```bash
-   python3 split_video.py "test_video.webm" 10
+   python3 split_video_script.py "test_video.webm" 10
    ```
 3. Verify the output:
    ```bash
@@ -195,16 +195,16 @@ Test different worker counts to find optimal performance for your system:
 
 ```bash
 # Single-threaded (slowest)
-python3 split_video.py "video.webm" 60 1
+python3 split_video_script.py "video.webm" 60 1
 
 # Dual-threaded
-python3 split_video.py "video.webm" 60 2
+python3 split_video_script.py "video.webm" 60 2
 
 # Quad-threaded
-python3 split_video.py "video.webm" 60 4
+python3 split_video_script.py "video.webm" 60 4
 
 # Auto (uses CPU count)
-python3 split_video.py "video.webm" 60
+python3 split_video_script.py "video.webm" 60
 ```
 
 ## Technical Details
@@ -288,7 +288,7 @@ Processing speed varies based on:
 #### Script is too slow
 
 **Solutions**:
-1. Increase worker count: `python3 split_video.py video.webm 60 4`
+1. Increase worker count: `python3 split_video_script.py video.webm 60 4`
 2. Reduce quality (edit script):
    - Change `-crf` from `'10'` to `'20'` (line 90)
    - Change `-cpu-used` from `'4'` to `'5'` (line 92)
@@ -339,7 +339,7 @@ Create a simple bash script:
 ```bash
 #!/bin/bash
 for video in *.webm; do
-    python3 split_video.py "$video" 60 4
+    python3 split_video_script.py "$video" 60 4
 done
 ```
 
