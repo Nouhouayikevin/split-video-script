@@ -105,7 +105,7 @@ def process_segment(segment_info):
     except Exception as e:
         return (False, seg_num, 0, str(e))
 
-def split_video(video_path, segment_duration, max_workers=None):
+def split_video_script(video_path, segment_duration, max_workers=None):
     """
     Split video into segments using multi-threading.
     
@@ -172,14 +172,14 @@ def split_video(video_path, segment_duration, max_workers=None):
 
 def main():
     if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print_normal(f"{Colors.BOLD}Usage:{Colors.RESET} python split_video.py <video_filename> <segment_duration_seconds> [max_workers]")
+        print_normal(f"{Colors.BOLD}Usage:{Colors.RESET} python split_video_script.py <video_filename> <segment_duration_seconds> [max_workers]")
         print_normal(f"\n{Colors.BOLD}Arguments:{Colors.RESET}")
         print_normal("  video_filename          Path to the video file")
         print_normal("  segment_duration        Duration of each segment in seconds")
         print_normal("  max_workers (optional)  Maximum number of concurrent workers (default: CPU count)")
         print_normal(f"\n{Colors.BOLD}Example:{Colors.RESET}")
-        print_normal('  python split_video.py "video.webm" 60')
-        print_normal('  python split_video.py "video.webm" 60 4\n')
+        print_normal('  python split_video_script.py "video.webm" 60')
+        print_normal('  python split_video_script.py "video.webm" 60 4\n')
         sys.exit(1)
     
     video_filename = sys.argv[1]
@@ -202,7 +202,7 @@ def main():
             print_error("Error: Invalid max_workers value. Please provide a positive integer.")
             sys.exit(1)
     
-    split_video(video_filename, segment_duration, max_workers)
+    split_video_script(video_filename, segment_duration, max_workers)
 
 if __name__ == "__main__":
     main()
