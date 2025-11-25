@@ -1,21 +1,23 @@
-# 🎬 Video Splitter
+# Video Splitter
 
-A Python script to split video files into smaller segments of specified duration using ffmpeg.
+A Python script for splitting video files into segments of specified duration using ffmpeg with multi-threading support.
 
-## 📋 Features
+## Features
 
-- ✂️ Split videos into segments of any duration (in seconds)
-- 🎯 Reliable encoding with VP8 codec for WebM files
-- 📊 Real-time progress display
-- 🗂️ Automatic output directory creation
-- ✅ File size verification for each segment
-- 🚀 Optimized for speed while maintaining quality
+- Split videos into segments of any duration (in seconds)
+- Multi-threaded processing for faster execution
+- Reliable encoding with VP8 codec for WebM files
+- Color-coded terminal output for better readability
+- Real-time progress tracking
+- Automatic output directory creation
+- File size verification for each segment
+- Optimized for speed while maintaining quality
 
-## 🔧 Prerequisites
+## Prerequisites
 
 ### System Requirements
 
-- **Python 3.6+** (usually pre-installed on most Linux distributions)
+- **Python 3.6+** (standard library only, no external packages required)
 - **ffmpeg** with libvpx support
 
 ### Installing ffmpeg
@@ -36,7 +38,15 @@ sudo dnf install ffmpeg
 brew install ffmpeg
 ```
 
-#### Verify Installation
+#### Arch Linux
+```bash
+sudo pacman -S ffmpeg
+```
+
+### Verify Installation
+
+Run the following commands to ensure ffmpeg is properly installed:
+
 ```bash
 ffmpeg -version
 ffprobe -version
@@ -44,228 +54,319 @@ ffprobe -version
 
 Both commands should display version information without errors.
 
-## 📥 Installation
+## Installation
 
-### 1. Clone the Repository
+### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/video-splitter.git
+git clone git@github.com:Nouhouayikevin/split-video-script.git
 cd video-splitter
 ```
 
-### 2. (Optional) Create a Virtual Environment
-
-While not strictly necessary (the script only uses standard library + ffmpeg), you can create a virtual environment for isolation:
-
-```bash
-# Create virtual environment
-python3 -m venv venv
-
-# Activate it
-source venv/bin/activate  # On Linux/macOS
-# OR
-venv\Scripts\activate     # On Windows
-```
-
-### 3. Make the Script Executable (Optional)
+### Make the Script Executable (Optional)
 ```bash
 chmod +x split_video.py
 ```
 
-## 🚀 Usage
+No additional dependencies or virtual environment setup is required.
+
+## Usage
 
 ### Basic Syntax
 ```bash
-python3 split_video.py <video_filename> <segment_duration_seconds>
+python3 split_video.py <video_filename> <segment_duration_seconds> [max_workers]
 ```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `video_filename` | Yes | Path to the video file (relative or absolute) |
+| `segment_duration_seconds` | Yes | Duration of each segment in seconds (positive integer) |
+| `max_workers` | No | Maximum number of concurrent workers (default: CPU count) |
 
 ### Examples
 
-#### Split a 5-minute video into 60-second segments
+#### Split a video into 60-second segments
 ```bash
-python3 split_video.py "my_video.webm" 60
+python3 split_video.py "recording.webm" 60
 ```
 
-#### Split a screencast into 45-second segments
+#### Split with custom thread count
 ```bash
-python3 split_video.py "Screencast from 2025-11-21 01-33-35.webm" 45
+python3 split_video.py "presentation.webm" 45 4
 ```
 
-#### Using relative or absolute paths
+#### Using absolute paths
 ```bash
-# Relative path
-python3 split_video.py "./videos/recording.webm" 30
-
-# Absolute path
-python3 split_video.py "/home/user/Videos/presentation.webm" 120
+python3 split_video.py "/home/user/Videos/screencast.webm" 30
 ```
 
-## 📁 Output
+#### Using relative paths
+```bash
+python3 split_video.py "./videos/tutorial.webm" 120 2
+```
 
-### Output Directory
-All segments are saved in a `result/` directory (created automatically if it doesn't exist).
+## Output
+
+### Directory Structure
+
+All segments are saved in a `result/` directory, created automatically in the current working directory.
 
 ### Naming Convention
-Segments are named with a sequential number:
+
+Segments are named sequentially with zero-padded numbers:
+
 ```
-original_video_segment_01.webm
-original_video_segment_02.webm
-original_video_segment_03.webm
-...
+result/
+├── video_name_segment_01.webm
+├── video_name_segment_02.webm
+├── video_name_segment_03.webm
+└── ...
 ```
 
 ### Example Output
+
 For a 5-minute video split into 60-second segments:
+
 ```
 result/
-├── my_video_segment_01.webm  (60 seconds)
-├── my_video_segment_02.webm  (60 seconds)
-├── my_video_segment_03.webm  (60 seconds)
-├── my_video_segment_04.webm  (60 seconds)
-├── my_video_segment_05.webm  (60 seconds)
-└── my_video_segment_06.webm  (5.24 seconds - remainder)
+├── my_video_segment_01.webm  (60.00 seconds, ~12 MB)
+├── my_video_segment_02.webm  (60.00 seconds, ~12 MB)
+├── my_video_segment_03.webm  (60.00 seconds, ~14 MB)
+├── my_video_segment_04.webm  (60.00 seconds, ~14 MB)
+├── my_video_segment_05.webm  (60.00 seconds, ~13 MB)
+└── my_video_segment_06.webm  (5.24 seconds, ~1 MB)
 ```
 
-## 🧪 Testing
+## Terminal Output
 
-### Test with a Sample Video
+The script provides color-coded output for better readability:
 
-1. **Download or create a test video** (or use your own):
-   ```bash
-   # Example: Record a short screencast or use an existing video
-   ```
+- **Yellow**: Informational messages (processing status, video info)
+- **Green**: Success messages (completed segments)
+- **Red**: Error messages (failures, missing files)
+- **Bold**: Section headers and important information
 
-2. **Run the script**:
+### Sample Output
+
+```
+Loading video: my_video.webm
+Video duration: 305.24 seconds (5.09 minutes)
+Segment duration: 60 seconds
+Creating 6 segments using multi-threading...
+
+[Segment 1/6] Processing: 0.00s - 60.00s -> my_video_segment_01.webm
+[Segment 2/6] Processing: 60.00s - 120.00s -> my_video_segment_02.webm
+[Segment 1/6] Completed successfully (11.8 MB)
+[Segment 3/6] Processing: 120.00s - 180.00s -> my_video_segment_03.webm
+[Segment 2/6] Completed successfully (11.7 MB)
+...
+
+Summary:
+Successful: 6/6
+Output directory: /path/to/result
+```
+
+## Testing
+
+### Quick Test
+
+1. Prepare a test video file (or use an existing one)
+2. Run the script with a short segment duration:
    ```bash
    python3 split_video.py "test_video.webm" 10
    ```
-
-3. **Verify the output**:
+3. Verify the output:
    ```bash
    ls -lh result/
    ```
-   
-   You should see multiple segment files with reasonable sizes (not 0 bytes).
-
-4. **Play a segment** to verify it works:
+4. Play a segment to confirm it works:
    ```bash
    vlc result/test_video_segment_01.webm
-   # OR
+   # or
    mpv result/test_video_segment_01.webm
-   # OR
+   # or
    ffplay result/test_video_segment_01.webm
    ```
 
-### Expected Behavior
+### Performance Testing
 
-When you run the script, you should see output like this:
+Test different worker counts to find optimal performance for your system:
 
+```bash
+# Single-threaded (slowest)
+python3 split_video.py "video.webm" 60 1
+
+# Dual-threaded
+python3 split_video.py "video.webm" 60 2
+
+# Quad-threaded
+python3 split_video.py "video.webm" 60 4
+
+# Auto (uses CPU count)
+python3 split_video.py "video.webm" 60
 ```
-🎬 Loading video: test_video.webm
-⏱️  Video duration: 305.24 seconds (5.09 minutes)
-✂️  Segment duration: 60 seconds
-📦 Creating 6 segments...
-⚠️  Note: Ré-encodage nécessaire pour webm (prendra quelques minutes)
 
-⏳ Segment 1/6: 0.00s - 60.00s -> result/test_video_segment_01.webm
-frame=  1500 fps= 25 q=10.0 size=   11264kB time=00:00:59.99 bitrate=1536.5kbits/s speed=1.0x
-✅ Segment 1/6 terminé! (11.8 MB)
+## Technical Details
 
-⏳ Segment 2/6: 60.00s - 120.00s -> result/test_video_segment_02.webm
-...
-```
+### Encoding Parameters
 
-## ⚙️ Technical Details
+The script uses optimized ffmpeg parameters for WebM files:
 
-### Encoding Settings
-
-The script uses the following ffmpeg parameters for optimal balance between speed and quality:
-
-- **Video Codec**: `libvpx` (VP8) - faster than VP9, good quality
-- **CRF**: `10` (Constant Rate Factor) - excellent quality (lower = better, range: 4-63)
-- **Bitrate**: `2M` (2 Mbps) - good quality for most screencasts
-- **CPU Used**: `4` - balanced speed/quality (range: 0-5, higher = faster but lower quality)
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| Video Codec | `libvpx` | VP8 codec (faster than VP9, good quality) |
+| CRF | `10` | Constant Rate Factor (lower = better quality, range: 4-63) |
+| Bitrate | `2M` | 2 Mbps target bitrate |
+| CPU Used | `4` | Speed/quality balance (0=slowest/best, 5=fastest/worst) |
 
 ### Why Re-encoding?
 
-WebM files don't have regular keyframes, making it impossible to split them accurately using simple copy mode (`-c copy`). Re-encoding ensures:
-- ✅ All segments are valid and playable
-- ✅ Precise timing at segment boundaries
-- ✅ No corruption or empty files
+WebM files lack regular keyframes, making accurate splitting with simple copy mode (`-c copy`) impossible. Re-encoding ensures:
 
-### Performance
+- All segments are valid and playable
+- Precise timing at segment boundaries
+- No corruption or empty output files
+- Consistent quality across all segments
 
-Approximate processing times (on a modern CPU):
-- **1 minute of 1080p video**: ~1-2 minutes
-- **5 minutes of 1080p video**: ~6-12 minutes
-- **10 minutes of 1080p video**: ~12-25 minutes
+### Multi-threading Benefits
 
-Processing speed depends on:
-- CPU performance
-- Video resolution
-- Video complexity (static vs. dynamic content)
+Processing multiple segments concurrently significantly reduces total processing time:
 
-## 🐛 Troubleshooting
+| Segments | Sequential | 2 Workers | 4 Workers |
+|----------|-----------|-----------|-----------|
+| 6 segments | ~12 min | ~6-7 min | ~4-5 min |
+| 10 segments | ~20 min | ~10-12 min | ~6-8 min |
 
-### Error: "ffprobe not found"
-**Solution**: Install ffmpeg (see Prerequisites section)
+**Note**: Actual performance depends on CPU capabilities and video complexity.
 
-### Error: "Video file not found"
-**Solution**: Check the file path. Use quotes around filenames with spaces:
-```bash
-python3 split_video.py "my video.webm" 60
-```
+### Performance Metrics
 
-### Segments are empty (0 bytes)
-**Solution**: This script uses re-encoding to avoid this issue. If you still encounter it:
-1. Verify your ffmpeg installation supports libvpx: `ffmpeg -codecs | grep vpx`
-2. Check the original video plays correctly: `ffplay your_video.webm`
+Approximate processing times on a modern CPU (Intel i5/i7 or AMD Ryzen 5/7):
 
-### Script is too slow
+| Video Length | Resolution | Workers | Estimated Time |
+|--------------|-----------|---------|----------------|
+| 5 minutes | 1080p | 2 | 6-8 minutes |
+| 5 minutes | 1080p | 4 | 4-6 minutes |
+| 10 minutes | 1080p | 2 | 12-16 minutes |
+| 10 minutes | 1080p | 4 | 8-12 minutes |
+
+Processing speed varies based on:
+- CPU performance and core count
+- Video resolution and bitrate
+- Content complexity (static vs. dynamic scenes)
+- Available system resources
+
+## Troubleshooting
+
+### Common Issues
+
+#### Error: "ffprobe not found"
+
+**Cause**: ffmpeg is not installed or not in PATH.
+
+**Solution**: Install ffmpeg using your package manager (see Prerequisites section).
+
+#### Error: "Video file not found"
+
+**Cause**: Incorrect file path or filename.
+
+**Solution**: 
+- Verify the file exists: `ls -l "video.webm"`
+- Use quotes around filenames with spaces: `"my video.webm"`
+- Use absolute paths if relative paths fail
+
+#### Segments are empty (0 bytes)
+
+**Cause**: This script uses re-encoding to prevent this issue, but it can occur if ffmpeg lacks codec support.
+
+**Solution**:
+1. Verify libvpx support: `ffmpeg -codecs | grep vpx`
+2. Test the original video: `ffplay video.webm`
+3. Check ffmpeg error output in the terminal
+
+#### Script is too slow
+
 **Solutions**:
-- Increase `-cpu-used` value (edit line 92 in the script, change `'4'` to `'5'`)
-- Lower the quality: change `-crf` from `'10'` to `'20'` (line 90)
-- Use a lower bitrate: change `'2M'` to `'1M'` (line 91)
+1. Increase worker count: `python3 split_video.py video.webm 60 4`
+2. Reduce quality (edit script):
+   - Change `-crf` from `'10'` to `'20'` (line 90)
+   - Change `-cpu-used` from `'4'` to `'5'` (line 92)
+   - Reduce bitrate from `'2M'` to `'1M'` (line 91)
 
-### Out of disk space
-**Solution**: The output files will be roughly the same total size as the input. Ensure you have enough free space:
-```bash
-df -h .
+#### Out of disk space
+
+**Cause**: Insufficient storage for output files.
+
+**Solution**: 
+- Check available space: `df -h .`
+- Output files are roughly the same total size as input
+- Free up space or use a different output location
+
+#### Permission denied
+
+**Cause**: No write permission in current directory.
+
+**Solution**:
+- Check permissions: `ls -ld .`
+- Run from a directory where you have write access
+- Or modify the script to use a different output directory
+
+## Advanced Usage
+
+### Custom Output Directory
+
+Modify line 119 in the script to change the output directory:
+
+```python
+result_dir = Path("/custom/path/to/output")
 ```
 
-## 📝 Script Parameters Explained
+### Adjust Quality Settings
 
-### Command Line Arguments
+Edit the ffmpeg command parameters (lines 88-92) to customize encoding:
 
-1. **video_filename** (required)
-   - The path to your video file
-   - Can be relative or absolute
-   - Use quotes if the filename contains spaces
+```python
+'-crf', '10',      # Quality: 4 (best) to 63 (worst)
+'-b:v', '2M',      # Bitrate: adjust based on needs
+'-cpu-used', '4',  # Speed: 0 (slow/best) to 5 (fast/worst)
+```
 
-2. **segment_duration_seconds** (required)
-   - Duration of each segment in seconds
-   - Must be a positive integer
-   - Examples: `30`, `45`, `60`, `120`
+### Process Multiple Videos
 
-## 🤝 Contributing
+Create a simple bash script:
 
-Contributions are welcome! Feel free to:
-- Report bugs
-- Suggest features
-- Submit pull requests
+```bash
+#!/bin/bash
+for video in *.webm; do
+    python3 split_video.py "$video" 60 4
+done
+```
 
-## 📄 License
+## Contributing
+
+Contributions are welcome. Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with clear commit messages
+4. Test thoroughly
+5. Submit a pull request
+
+## License
 
 This project is open source and available under the MIT License.
 
-## 👤 Author
+## Author
 
-Created for splitting screencast recordings and long videos into manageable segments.
+Created for efficiently splitting screencast recordings and long videos into manageable segments.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [ffmpeg](https://ffmpeg.org/)
 - Uses VP8 codec from the [WebM Project](https://www.webmproject.org/)
+- Multi-threading implemented with Python's `concurrent.futures`
 
 ---
 
-**Happy video splitting! 🎬✂️**
+**For issues, questions, or feature requests, please open an issue on GitHub.**
