@@ -59,7 +59,7 @@ Both commands should display version information without errors.
 ### Clone the Repository
 ```bash
 git clone git@github.com:Nouhouayikevin/split-video-script.git
-cd video-splitter
+cd split-video-script
 ```
 
 ### Make the Script Executable (Optional)
@@ -352,14 +352,6 @@ Contributions are welcome. Please follow these guidelines:
 3. Make your changes with clear commit messages
 4. Test thoroughly
 5. Submit a pull request
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Author
-
-Created for efficiently splitting screencast recordings and long videos into manageable segments.
 
 ## Acknowledgments
 
